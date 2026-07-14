@@ -3,6 +3,7 @@ package e2e
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"testing"
@@ -22,7 +23,7 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	err := godotenv.Load()
+	err := godotenv.Load("../../.env")
 
 	baseUrl = os.Getenv("API_BASE_URL")
 	if baseUrl == "" {
@@ -31,7 +32,7 @@ func TestMain(m *testing.M) {
 
 	token, err := loginNGetToken()
 	if err != nil {
-		panic("Falha ao autenticar na api: " + err.Error())
+		log.Fatalf("Falha ao autenticar na api: %s", err.Error())
 	}
 
 	authToken = token
@@ -45,10 +46,15 @@ func TestMain(m *testing.M) {
 }
 
 func loginNGetToken() (string, error) {
-	body := `{
-	"email_ou_username": "adm",
-	"senha": "123456"
-	}`
+	body := fmt.Sprintf(`{
+	"email_ou_username": "%s",
+	"senha": "%s"
+	}`, os.Getenv("ADM_USERNAME"), os.Getenv("ADM_PASSWORD"))
+
+	if os.Getenv("ADM_USERNAME") == "" || os.Getenv("ADM_PASSWORD") == "" {
+		return "", fmt.Errorf("Sem credenciais de login no envfile.")
+	}
+
 	resp, err := http.Post(baseUrl+"/auth", "application/json", bytes.NewBufferString(body))
 	if err != nil {
 		return "", err
@@ -59,7 +65,7 @@ func loginNGetToken() (string, error) {
 	token := resp.Header.Get("Authorization")
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Errorf("Status: %d, want %d", resp.StatusCode, http.StatusOK)
+		return "", fmt.Errorf("Status: %d, want %d", resp.StatusCode, http.StatusOK)
 	}
 
 	return token, nil

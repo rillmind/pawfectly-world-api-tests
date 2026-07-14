@@ -51,7 +51,7 @@ func TestCreateUser(t *testing.T) {
 func TestDeleteUser(t *testing.T) {
 	req, err := http.NewRequest(http.MethodDelete, baseUrl+"/user/"+user.ID, bytes.NewBufferString(""))
 	if err != nil {
-		t.Fatalf("Erro ao tentar criar usuario: %v", err)
+		t.Fatalf("Erro ao tentar deletar usuario: %v", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
