@@ -65,7 +65,7 @@ func loginNGetToken() (string, error) {
 	token := resp.Header.Get("Authorization")
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("Status: %d, want %d", resp.StatusCode, http.StatusOK)
+		return "", fmt.Errorf("status-code: %d, want %d", resp.StatusCode, http.StatusOK)
 	}
 
 	return token, nil

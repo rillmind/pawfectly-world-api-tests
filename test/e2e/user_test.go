@@ -14,6 +14,27 @@ var user struct {
 	Username string `json:"username"`
 }
 
+func TestGetUsers(t *testing.T) {
+	req, err := http.NewRequest(http.MethodGet, baseUrl+"/user", bytes.NewBufferString(""))
+	if err != nil {
+		t.Errorf("Erro ao listar usuarios: %v", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", BEARER+authToken)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("Erro ao executar requisicao: %v", err)
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status-code: %d, want: %d", resp.StatusCode, http.StatusOK)
+	}
+}
+
 func TestCreateUser(t *testing.T) {
 	body := `{
 	"nome": "user",
@@ -44,7 +65,7 @@ func TestCreateUser(t *testing.T) {
 	}
 
 	if resp.StatusCode != http.StatusCreated {
-		t.Errorf("status: %d, want %d", resp.StatusCode, http.StatusCreated)
+		t.Errorf("status-code: %d, want %d", resp.StatusCode, http.StatusCreated)
 	}
 }
 
@@ -66,6 +87,6 @@ func TestDeleteUser(t *testing.T) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
-		t.Errorf("status: %d, want %d", resp.StatusCode, http.StatusNoContent)
+		t.Errorf("status-code: %d, want %d", resp.StatusCode, http.StatusNoContent)
 	}
 }
