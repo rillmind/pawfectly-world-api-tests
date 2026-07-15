@@ -14,27 +14,6 @@ var user struct {
 	Username string `json:"username"`
 }
 
-func TestGetUsers(t *testing.T) {
-	req, err := http.NewRequest(http.MethodGet, baseUrl+"/user", bytes.NewBufferString(""))
-	if err != nil {
-		t.Errorf("Erro ao listar usuarios: %v", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", BEARER+authToken)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		t.Fatalf("Erro ao executar requisicao: %v", err)
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		t.Fatalf("status-code: %d, want: %d", resp.StatusCode, http.StatusOK)
-	}
-}
-
 func TestCreateUser(t *testing.T) {
 	body := `{
 	"nome": "user",
@@ -69,6 +48,45 @@ func TestCreateUser(t *testing.T) {
 	}
 }
 
+func TestGetUsers(t *testing.T) {
+	req, err := http.NewRequest(http.MethodGet, baseUrl+"/user", bytes.NewBufferString(""))
+	if err != nil {
+		t.Errorf("Erro ao listar usuarios: %v", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", BEARER+authToken)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("Erro ao executar requisicao: %v", err)
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status-code: %d, want: %d", resp.StatusCode, http.StatusOK)
+	}
+}
+
+func TestListUserByID(t *testing.T) {
+	req, err := http.NewRequest(http.MethodGet, baseUrl+"/user/"+user.ID, bytes.NewBufferString(""))
+	if err != nil {
+		t.Errorf("Erro ao listar usuario por ID: %v", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", BEARER+authToken)
+
+	resp, err := client.Do(req)
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status-code: %d, want: %d", resp.StatusCode, http.StatusOK)
+	}
+}
+
 func TestDeleteUser(t *testing.T) {
 	req, err := http.NewRequest(http.MethodDelete, baseUrl+"/user/"+user.ID, bytes.NewBufferString(""))
 	if err != nil {
@@ -78,7 +96,6 @@ func TestDeleteUser(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", BEARER+authToken)
 
-	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		t.Fatalf("Erro ao executar requisiçao: %v", err)
