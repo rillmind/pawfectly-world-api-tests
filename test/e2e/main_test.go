@@ -17,8 +17,8 @@ const (
 )
 
 var (
-	baseUrl   string
 	client    *http.Client
+	baseUrl   string
 	authToken string
 )
 
