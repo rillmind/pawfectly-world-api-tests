@@ -30,16 +30,21 @@ func TestMain(m *testing.M) {
 		baseUrl = "http://127.0.0.1:2306"
 	}
 
+	client = &http.Client{
+		Timeout: time.Second * 10,
+	}
+
+	health := CheckHealth()
+	if health != nil {
+		log.Fatalf("API offline: %v", health)
+	}
+
 	token, err := loginNGetToken()
 	if err != nil {
 		log.Fatalf("Falha ao autenticar na api: %s", err.Error())
 	}
 
 	authToken = token
-
-	client = &http.Client{
-		Timeout: time.Second * 10,
-	}
 
 	code := m.Run()
 	os.Exit(code)
@@ -69,4 +74,20 @@ func loginNGetToken() (string, error) {
 	}
 
 	return token, nil
+}
+
+func CheckHealth() error {
+	resp, err := client.Get(baseUrl + "/health")
+
+	if err != nil {
+		return fmt.Errorf("Erro ao executar requisicao: %v", err)
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Fatalf("status-code: %v, want %v", resp.StatusCode, http.StatusOK)
+	}
+
+	return nil
 }
