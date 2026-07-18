@@ -30,7 +30,7 @@ func createUser(t *testing.T) (*User, error) {
 	client := http.Client{Timeout: time.Second * 10}
 	resp, err := client.Post(baseUrl+"/user", "application/json", bytes.NewBufferString(body))
 	if err != nil {
-		t.Fatalf("Erro ao tentar deletar usuario: %v", err)
+		t.Fatalf("Erro ao tentar criar usuario: %v", err)
 	}
 	if resp.StatusCode != http.StatusCreated {
 		t.Fatalf("status-code: %d, want: %d", resp.StatusCode, http.StatusCreated)
@@ -50,7 +50,7 @@ func deleteUser(t *testing.T, id string) {
 
 	req, err := http.NewRequest(http.MethodDelete, baseUrl+"/user/"+id, bytes.NewBufferString(""))
 	if err != nil {
-		t.Fatalf("Erro ao tntar deletar usuario: %v", err)
+		t.Fatalf("Erro ao tentar deletar usuario: %v", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")

@@ -25,11 +25,11 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("Erro executar tentar criar usuario: %v", err)
 	}
 
+	defer resp.Body.Close()
+
 	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
 		t.Fatalf("Erro ao decodificar corpo da resposta: %v", err)
 	}
-
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusCreated {
 		t.Fatalf("status-code %d, want: %d", resp.StatusCode, http.StatusCreated)
@@ -74,6 +74,10 @@ func TestListUserByID(t *testing.T) {
 	req.Header.Set("Authorization", BEARER+authToken)
 
 	resp, err := client.Do(req)
+
+	if err != nil {
+		t.Fatalf("Erro ao tentar executar requisicao: %v", err)
+	}
 
 	defer resp.Body.Close()
 
