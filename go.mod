@@ -1,4 +1,4 @@
-module github.com/rillmind/pawfectlyWorld_api_test
+module github.com/rillmind/pawfectly-world-api-tests
 
 go 1.26.4
 
